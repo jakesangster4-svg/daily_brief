@@ -1,0 +1,8 @@
+{
+  "name": "daily-brief",
+  "version": "1.0.0",
+  "description": "Jake's Daily News Digest Agent",
+  "main": "agent.js",
+  "scripts": { "start": "node agent.js" },
+  "dependencies": { "rss-parser": "^3.13.0" }
+}

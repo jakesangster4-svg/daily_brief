@@ -3,7 +3,6 @@
 //  Newspaper Edition — Light, Big, Tabbed, Collapsible
 // ============================================================
 
-require('dotenv').config();
 
 const RSSParser = require('rss-parser');
 const fs = require('fs');

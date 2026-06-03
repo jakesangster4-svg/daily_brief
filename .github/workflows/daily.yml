@@ -8,6 +8,7 @@ permissions:
 jobs:
   build-brief:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -23,8 +24,12 @@ jobs:
         run: node agent.js
       - name: Commit and push the updated dashboard
         run: |
-          git config user.name "News Agent Bot"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Daily brief update" || echo "No changes to commit"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Daily brief update"
+            git push
+          fi

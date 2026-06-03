@@ -133,8 +133,11 @@ async function summarizeWithClaude(categoryName, items) {
   const prompt = 'You are the writer behind a wildly popular daily briefing - think Morning Brew wit crossed with a sharp friend who actually read every article and is not afraid to be honest about it. Your readers are smart, busy professionals who want the real takeaway AND a reason to smile.\n\nHere are today\'s articles from the "' + categoryName + '" category:\n\n' + headlineList + '\n\nWrite 5 to 10 bullet points (pick the number based on how much genuinely matters today - do not pad). Each bullet MUST:\n- Lead with the single most important fact, number, or development\n- Include the hard specifics: dollar amounts, percentages, names, dates. The numbers are the point.\n- Be written in a HUMOROUSLY CANDID voice - dry wit, the occasional knowing aside, calling things what they are. Smart and funny, never goofy or cringe. Think a witty columnist, not a stand-up comedian.\n- Be 2-3 punchy sentences. Tight. Every word earns its place.\n- Start with a fitting emoji\n- Reference the article index in "sourceIndex"\n\nTONE EXAMPLES (match this energy):\n"WeWork is trying the IPO thing again, because apparently nobody in that building learned anything the first time. The new pitch values them at 9B dollars - down a cool 91 percent from their 2019 peak of 47B. Bold strategy to ask public markets for money you set on fire once already."\n"OpenAI dropped GPT-5 and it can now book your flights, which is great until it books you a window seat in row 47. The model reportedly cost 2B dollars plus to train, so those reasoning skills better be worth it. Microsoft, who owns 49 percent, is presumably thrilled."\n\nAlso pick the SINGLE biggest story and write a 3-4 sentence Top Story in the same candid, witty voice.\n\nRespond ONLY in this exact JSON format, no markdown, no code blocks:\n{\n  "bullets": [\n    {"text": "emoji witty candid bullet...", "sourceIndex": 1}\n  ],\n  "topStory": {\n    "headline": "Punchy headline with a wink",\n    "summary": "3-4 candid witty sentences with the real stakes.",\n    "sourceIndex": 1\n  }\n}';
 
   try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 60000); // 60s max per Claude call
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': ANTHROPIC_API_KEY,
@@ -146,6 +149,7 @@ async function summarizeWithClaude(categoryName, items) {
         messages: [{ role: 'user', content: prompt }]
       })
     });
+    clearTimeout(timer);
     const data = await response.json();
     if (data.error) throw new Error(data.error.message);
     const clean = data.content[0].text.trim().replace(/```json|```/g, '').trim();
@@ -219,10 +223,11 @@ async function runAgent() {
 
   const results = [];
   for (const [category, sources] of Object.entries(SOURCES)) {
-    console.log('\n' + category);
+    console.log('\n[' + new Date().toISOString() + '] ' + category);
     const items = await fetchCategory(category, sources);
-    console.log('  Summarizing with Claude...');
+    console.log('  Fetched ' + items.length + ' items, calling Claude...');
     const summary = await summarizeWithClaude(category, items);
+    console.log('  Claude done for ' + category);
     results.push({ category, summary, itemCount: items.length });
   }
 

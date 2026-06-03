@@ -3,6 +3,9 @@ on:
   schedule:
     - cron: '0 13 * * *'
   workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: [ 'agent.js', '.github/workflows/daily.yml' ]
 permissions:
   contents: write
 jobs:

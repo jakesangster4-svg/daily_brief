@@ -208,15 +208,26 @@ async function runAgent() {
     process.exit(1);
   }
 
-  const results = [];
-  for (const [category, sources] of Object.entries(SOURCES)) {
-    console.log('\n[' + new Date().toISOString() + '] ' + category);
-    const items = await fetchCategory(category, sources);
-    console.log('  Fetched ' + items.length + ' items, calling Claude...');
-    const summary = await summarizeWithClaude(category, items);
-    console.log('  Claude done for ' + category);
-    results.push({ category, summary, itemCount: items.length });
-  }
+  const categoryEntries = Object.entries(SOURCES);
+
+  // Process all categories in PARALLEL so the whole run finishes in 1-2 min
+  // instead of stacking 9 Claude calls back-to-back.
+  const results = await Promise.all(
+    categoryEntries.map(async ([category, sources]) => {
+      console.log('[' + new Date().toISOString() + '] START ' + category);
+      const items = await fetchCategory(category, sources);
+      console.log('  ' + category + ': fetched ' + items.length + ' items, calling Claude...');
+      const summary = await summarizeWithClaude(category, items);
+      console.log('  ' + category + ': Claude done');
+      return { category, summary, itemCount: items.length };
+    })
+  );
+
+  // Keep the original category order for display
+  results.sort((a, b) =>
+    categoryEntries.findIndex(e => e[0] === a.category) -
+    categoryEntries.findIndex(e => e[0] === b.category)
+  );
 
   console.log('\nBuilding dashboard...');
   const html = buildHTML(results, new Date().toISOString());

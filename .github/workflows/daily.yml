@@ -6,34 +6,50 @@ on:
   push:
     branches: [ main ]
     paths: [ 'agent.js', '.github/workflows/daily.yml' ]
+
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  build-brief:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - name: Install dependencies
         run: npm install
+
       - name: Run the news agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node agent.js
-      - name: Commit and push the updated dashboard
+
+      - name: Prepare site folder
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Daily brief update"
-            git pull --rebase --autostash origin main || true
-            git push origin main || (git pull --rebase --autostash origin main && git push origin main)
-          fi
+          mkdir -p _site
+          cp index.html _site/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

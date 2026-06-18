@@ -234,6 +234,15 @@ async function runAgent() {
   fs.writeFileSync(OUTPUT_FILE, html, 'utf8');
   const total = results.reduce((a, r) => a + r.itemCount, 0);
   console.log('\nDONE! Processed ' + total + ' articles.');
+  process.exit(0); // force clean exit so a lingering socket can't hang the run
 }
+
+// MASTER WATCHDOG: if the whole run isn't done in 5 minutes, force-exit.
+// This guarantees the job never creeps toward GitHub's 10-min timeout.
+const WATCHDOG = setTimeout(() => {
+  console.error('WATCHDOG: run exceeded 5 minutes, force-exiting.');
+  process.exit(1);
+}, 5 * 60 * 1000);
+WATCHDOG.unref();
 
 runAgent().catch(err => { console.error(err); process.exit(1); });

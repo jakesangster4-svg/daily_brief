@@ -20,6 +20,8 @@ const SOURCES = {
     { name: 'Wired',              url: 'https://www.wired.com/feed/rss' },
     { name: 'MIT Tech Review',    url: 'https://www.technologyreview.com/feed/' },
     { name: 'VentureBeat AI',     url: 'https://venturebeat.com/category/ai/feed/' },
+    { name: 'One Useful Thing',   url: 'https://www.oneusefulthing.org/feed' },
+    { name: 'TLDR AI',            url: 'https://tldr.tech/api/rss/ai' },
   ],
   'Energy': [
     { name: 'Utility Dive',       url: 'https://www.utilitydive.com/feeds/news/' },
@@ -27,12 +29,18 @@ const SOURCES = {
     { name: 'Heatmap News',       url: 'https://heatmap.news/rss' },
     { name: 'E&E News',           url: 'https://www.eenews.net/rss/news' },
     { name: 'PV Magazine',        url: 'https://www.pv-magazine-usa.com/feed/' },
+    { name: 'Volts',              url: 'https://www.volts.wtf/feed' },
+    { name: 'Heated',             url: 'https://heated.world/feed' },
+    { name: 'Carbon Brief',       url: 'https://www.carbonbrief.org/feed/' },
   ],
   'Venture Capital': [
     { name: 'TechCrunch VC',      url: 'https://techcrunch.com/category/venture/feed/' },
     { name: 'Fortune Term Sheet', url: 'https://fortune.com/feed/fortune-feeds/?id=3230629' },
     { name: 'VentureBeat',        url: 'https://venturebeat.com/feed/' },
     { name: 'Crunchbase News',    url: 'https://news.crunchbase.com/feed/' },
+    { name: "Lenny's Newsletter", url: 'https://www.lennysnewsletter.com/feed' },
+    { name: 'Not Boring',         url: 'https://www.notboring.co/feed' },
+    { name: 'The Generalist',     url: 'https://www.generalist.com/feed' },
   ],
   'Healthcare & Healthcare VC': [
     { name: 'Healthcare Dive',    url: 'https://www.healthcaredive.com/feeds/news/' },
@@ -40,6 +48,8 @@ const SOURCES = {
     { name: 'Fierce Healthcare',  url: 'https://www.fiercehealthcare.com/rss/xml' },
     { name: 'Fierce Biotech',     url: 'https://www.fiercebiotech.com/rss/xml' },
     { name: 'MedCity News',       url: 'https://medcitynews.com/feed/' },
+    { name: 'Second Opinion',     url: 'https://secondopinion.substack.com/feed' },
+    { name: 'Hospitalogy',        url: 'https://www.hospitalogy.com/feed' },
   ],
   'Politics': [
     { name: 'Politico',           url: 'https://www.politico.com/rss/politicopicks.xml' },
@@ -47,6 +57,9 @@ const SOURCES = {
     { name: 'Axios',              url: 'https://api.axios.com/feed/' },
     { name: 'NPR Politics',       url: 'https://feeds.npr.org/1014/rss.xml' },
     { name: 'RealClearPolitics',  url: 'https://www.realclearpolitics.com/xml/politics.xml' },
+    { name: 'Letters from an American', url: 'https://heathercoxrichardson.substack.com/feed' },
+    { name: 'Tangle',             url: 'https://www.readtangle.com/feed' },
+    { name: 'The Free Press',     url: 'https://www.thefp.com/feed' },
   ],
   'World News': [
     { name: 'BBC World',          url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
@@ -54,6 +67,8 @@ const SOURCES = {
     { name: 'Al Jazeera',         url: 'https://www.aljazeera.com/xml/rss/all.xml' },
     { name: 'NPR World',          url: 'https://feeds.npr.org/1004/rss.xml' },
     { name: 'Foreign Policy',     url: 'https://foreignpolicy.com/feed/' },
+    { name: 'Semafor',            url: 'https://www.semafor.com/rss.xml' },
+    { name: 'GZERO Daily',        url: 'https://www.gzeromedia.com/feeds/feed.rss' },
   ],
 };
 

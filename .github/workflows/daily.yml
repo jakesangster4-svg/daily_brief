@@ -1,7 +1,8 @@
 name: Daily News Brief
 on:
   schedule:
-    - cron: '0 13 * * *'
+    - cron: '0 13 * * *'   # 7 AM Mountain — morning edition
+    - cron: '0 21 * * *'   # 3 PM Mountain — afternoon edition
   workflow_dispatch:
   push:
     branches: [ main ]

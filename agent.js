@@ -60,6 +60,7 @@ const SOURCES = {
     { name: 'Letters from an American', url: 'https://heathercoxrichardson.substack.com/feed' },
     { name: 'Tangle',             url: 'https://www.readtangle.com/feed' },
     { name: 'The Free Press',     url: 'https://www.thefp.com/feed' },
+    { name: 'Punchbowl News',     url: 'https://punchbowl.news/feed/' },
   ],
   'World News': [
     { name: 'BBC World',          url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },

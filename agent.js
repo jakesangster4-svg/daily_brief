@@ -74,6 +74,7 @@ const SOURCES = {
 };
 
 const MAX_ITEMS_PER_SOURCE = 5;
+const MAX_ITEM_AGE_DAYS = 7; // ignore anything older than this so the brief stays current
 const OUTPUT_FILE = path.join(__dirname, 'index.html');
 
 function safeString(val) {
@@ -104,19 +105,34 @@ function withTimeout(promise, ms, label) {
 
 async function fetchCategory(categoryName, sources) {
   console.log('  Fetching: ' + categoryName);
+  const cutoff = Date.now() - MAX_ITEM_AGE_DAYS * 24 * 60 * 60 * 1000;
   const allItems = [];
   for (const source of sources) {
     try {
       const feed = await withTimeout(parser.parseURL(source.url), 8000, source.name);
-      const items = (feed.items || []).slice(0, MAX_ITEMS_PER_SOURCE).map(item => ({
-        source: source.name,
-        title: safeString(item.title),
-        link: safeString(item.link),
-        summary: safeString(item.contentSnippet || item.content),
-        date: safeString(item.pubDate || item.isoDate),
-      }));
+      const parsed = (feed.items || []).map(item => {
+        const rawDate = safeString(item.pubDate || item.isoDate);
+        const ts = rawDate ? Date.parse(rawDate) : NaN;
+        return {
+          source: source.name,
+          title: safeString(item.title),
+          link: safeString(item.link),
+          summary: safeString(item.contentSnippet || item.content),
+          date: rawDate,
+          ts: isNaN(ts) ? null : ts,
+        };
+      });
+      // Drop anything older than the cutoff so a slow or stale feed can't inject
+      // months-old stories. Undated items are kept (sorted last) rather than
+      // assumed stale. Then sort newest-first so an active feed surfaces today's
+      // news regardless of the order the feed returned it in.
+      const items = parsed
+        .filter(it => it.ts === null || it.ts >= cutoff)
+        .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+        .slice(0, MAX_ITEMS_PER_SOURCE);
       allItems.push(...items);
-      console.log('    OK ' + source.name + ': ' + items.length + ' items');
+      const dropped = parsed.length - items.length;
+      console.log('    OK ' + source.name + ': ' + items.length + ' recent' + (dropped > 0 ? ' (' + dropped + ' old/extra skipped)' : ''));
     } catch (err) {
       console.log('    SKIP ' + source.name + ': ' + err.message.slice(0, 60));
     }
@@ -129,12 +145,13 @@ async function summarizeWithClaude(categoryName, items) {
 
   const headlineList = items.map((item, i) =>
     '[' + (i + 1) + '] SOURCE: ' + safeString(item.source) +
+    '\nDATE: ' + (safeString(item.date) || 'unknown') +
     '\nTITLE: ' + safeString(item.title) +
     '\nURL: ' + safeString(item.link) +
     '\nPREVIEW: ' + safeString(item.summary).slice(0, 280)
   ).join('\n\n');
 
-  const prompt = 'You are the writer behind a wildly popular daily briefing - think Morning Brew wit crossed with a sharp friend who actually read every article and is not afraid to be honest about it. Your readers are smart, busy professionals who want the real takeaway AND a reason to smile.\n\nHere are today\'s articles from the "' + categoryName + '" category:\n\n' + headlineList + '\n\nWrite 5 to 10 bullet points (pick the number based on how much genuinely matters today - do not pad). Each bullet MUST:\n- Lead with the single most important fact, number, or development\n- Include the hard specifics: dollar amounts, percentages, names, dates. The numbers are the point.\n- Be written in a HUMOROUSLY CANDID voice - dry wit, the occasional knowing aside, calling things what they are. Smart and funny, never goofy or cringe. Think a witty columnist, not a stand-up comedian.\n- Be 2-3 punchy sentences. Tight. Every word earns its place.\n- Start with a fitting emoji\n- Reference the article index in "sourceIndex"\n\nTONE EXAMPLES (match this energy):\n"WeWork is trying the IPO thing again, because apparently nobody in that building learned anything the first time. The new pitch values them at 9B dollars - down a cool 91 percent from their 2019 peak of 47B. Bold strategy to ask public markets for money you set on fire once already."\n"OpenAI dropped GPT-5 and it can now book your flights, which is great until it books you a window seat in row 47. The model reportedly cost 2B dollars plus to train, so those reasoning skills better be worth it. Microsoft, who owns 49 percent, is presumably thrilled."\n\nAlso pick the SINGLE biggest story and write a 3-4 sentence Top Story in the same candid, witty voice.\n\nRespond ONLY in this exact JSON format, no markdown, no code blocks:\n{\n  "bullets": [\n    {"text": "emoji witty candid bullet...", "sourceIndex": 1}\n  ],\n  "topStory": {\n    "headline": "Punchy headline with a wink",\n    "summary": "3-4 candid witty sentences with the real stakes.",\n    "sourceIndex": 1\n  }\n}';
+  const prompt = 'You are the writer behind a wildly popular daily briefing - think Morning Brew wit crossed with a sharp friend who actually read every article and is not afraid to be honest about it. Your readers are smart, busy professionals who want the real takeaway AND a reason to smile.\n\nHere are today\'s articles from the "' + categoryName + '" category:\n\n' + headlineList + '\n\nPrioritize the freshest, most newsworthy items (see each item\'s DATE) - today\'s and this week\'s developments. Do not feature stale or dated stories just to hit a number; it is better to write fewer bullets than to pad with old news.\n\nWrite 5 to 10 bullet points (pick the number based on how much genuinely matters today - do not pad). Each bullet MUST:\n- Lead with the single most important fact, number, or development\n- Include the hard specifics: dollar amounts, percentages, names, dates. The numbers are the point.\n- Be written in a HUMOROUSLY CANDID voice - dry wit, the occasional knowing aside, calling things what they are. Smart and funny, never goofy or cringe. Think a witty columnist, not a stand-up comedian.\n- Be 2-3 punchy sentences. Tight. Every word earns its place.\n- Start with a fitting emoji\n- Reference the article index in "sourceIndex"\n\nTONE EXAMPLES (match this energy):\n"WeWork is trying the IPO thing again, because apparently nobody in that building learned anything the first time. The new pitch values them at 9B dollars - down a cool 91 percent from their 2019 peak of 47B. Bold strategy to ask public markets for money you set on fire once already."\n"OpenAI dropped GPT-5 and it can now book your flights, which is great until it books you a window seat in row 47. The model reportedly cost 2B dollars plus to train, so those reasoning skills better be worth it. Microsoft, who owns 49 percent, is presumably thrilled."\n\nAlso pick the SINGLE biggest story and write a 3-4 sentence Top Story in the same candid, witty voice.\n\nRespond ONLY in this exact JSON format, no markdown, no code blocks:\n{\n  "bullets": [\n    {"text": "emoji witty candid bullet...", "sourceIndex": 1}\n  ],\n  "topStory": {\n    "headline": "Punchy headline with a wink",\n    "summary": "3-4 candid witty sentences with the real stakes.",\n    "sourceIndex": 1\n  }\n}';
 
   try {
     const controller = new AbortController();

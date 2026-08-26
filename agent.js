@@ -20,18 +20,21 @@ const SOURCES = {
     { name: 'Wired',              url: 'https://www.wired.com/feed/rss' },
     { name: 'MIT Tech Review',    url: 'https://www.technologyreview.com/feed/' },
     { name: 'VentureBeat AI',     url: 'https://venturebeat.com/category/ai/feed/' },
-    { name: 'One Useful Thing',   url: 'https://www.oneusefulthing.org/feed' },
     { name: 'TLDR AI',            url: 'https://tldr.tech/api/rss/ai' },
+    { name: 'Techmeme',           url: 'https://www.techmeme.com/feed.xml' },
+    { name: 'Simon Willison',     url: 'https://simonwillison.net/atom/everything/' },
+    { name: 'OpenAI News',        url: 'https://openai.com/news/rss.xml' },
+    { name: 'The Register',       url: 'https://www.theregister.com/headlines.atom' },
   ],
   'Energy': [
     { name: 'Utility Dive',       url: 'https://www.utilitydive.com/feeds/news/' },
     { name: 'Canary Media',       url: 'https://www.canarymedia.com/rss' },
-    { name: 'Heatmap News',       url: 'https://heatmap.news/rss' },
-    { name: 'E&E News',           url: 'https://www.eenews.net/rss/news' },
     { name: 'PV Magazine',        url: 'https://www.pv-magazine-usa.com/feed/' },
     { name: 'Volts',              url: 'https://www.volts.wtf/feed' },
     { name: 'Heated',             url: 'https://heated.world/feed' },
     { name: 'Carbon Brief',       url: 'https://www.carbonbrief.org/feed/' },
+    { name: 'Power Magazine',     url: 'https://www.powermag.com/feed/' },
+    { name: 'Inside Climate News', url: 'https://insideclimatenews.org/feed/' },
   ],
   'Venture Capital': [
     { name: 'TechCrunch VC',      url: 'https://techcrunch.com/category/venture/feed/' },
@@ -41,6 +44,9 @@ const SOURCES = {
     { name: "Lenny's Newsletter", url: 'https://www.lennysnewsletter.com/feed' },
     { name: 'Not Boring',         url: 'https://www.notboring.co/feed' },
     { name: 'The Generalist',     url: 'https://www.generalist.com/feed' },
+    { name: 'TechCrunch Startups', url: 'https://techcrunch.com/category/startups/feed/' },
+    { name: 'Sifted',             url: 'https://sifted.eu/feed' },
+    { name: 'SaaStr',             url: 'https://www.saastr.com/feed/' },
   ],
   'Healthcare & Healthcare VC': [
     { name: 'Healthcare Dive',    url: 'https://www.healthcaredive.com/feeds/news/' },
@@ -48,28 +54,34 @@ const SOURCES = {
     { name: 'Fierce Healthcare',  url: 'https://www.fiercehealthcare.com/rss/xml' },
     { name: 'Fierce Biotech',     url: 'https://www.fiercebiotech.com/rss/xml' },
     { name: 'MedCity News',       url: 'https://medcitynews.com/feed/' },
-    { name: 'Second Opinion',     url: 'https://secondopinion.substack.com/feed' },
     { name: 'Hospitalogy',        url: 'https://www.hospitalogy.com/feed' },
+    { name: 'KFF Health News',    url: 'https://kffhealthnews.org/feed/' },
   ],
   'Politics': [
     { name: 'Politico',           url: 'https://www.politico.com/rss/politicopicks.xml' },
     { name: 'The Hill',           url: 'https://thehill.com/rss/syndicator/19109' },
     { name: 'Axios',              url: 'https://api.axios.com/feed/' },
     { name: 'NPR Politics',       url: 'https://feeds.npr.org/1014/rss.xml' },
-    { name: 'RealClearPolitics',  url: 'https://www.realclearpolitics.com/xml/politics.xml' },
     { name: 'Letters from an American', url: 'https://heathercoxrichardson.substack.com/feed' },
     { name: 'Tangle',             url: 'https://www.readtangle.com/feed' },
     { name: 'The Free Press',     url: 'https://www.thefp.com/feed' },
     { name: 'Punchbowl News',     url: 'https://punchbowl.news/feed/' },
+    { name: 'The Dispatch',       url: 'https://thedispatch.com/feed/' },
+    { name: 'Roll Call',          url: 'https://rollcall.com/feed/' },
+    { name: 'Guardian US Politics', url: 'https://www.theguardian.com/us-news/us-politics/rss' },
   ],
   'World News': [
     { name: 'BBC World',          url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-    { name: 'AP News',            url: 'https://feeds.apnews.com/rss/apf-topnews' },
     { name: 'Al Jazeera',         url: 'https://www.aljazeera.com/xml/rss/all.xml' },
     { name: 'NPR World',          url: 'https://feeds.npr.org/1004/rss.xml' },
     { name: 'Foreign Policy',     url: 'https://foreignpolicy.com/feed/' },
     { name: 'Semafor',            url: 'https://www.semafor.com/rss.xml' },
     { name: 'GZERO Daily',        url: 'https://www.gzeromedia.com/feeds/feed.rss' },
+    { name: 'Guardian World',     url: 'https://www.theguardian.com/world/rss' },
+    { name: 'NYT World',          url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml' },
+    { name: 'Deutsche Welle',     url: 'https://rss.dw.com/rdf/rss-en-world' },
+    { name: 'France 24',          url: 'https://www.france24.com/en/rss' },
+    { name: 'The Economist',      url: 'https://www.economist.com/international/rss.xml' },
   ],
 };
 
@@ -91,6 +103,17 @@ function safeString(val) {
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+// Model-written text (and RSS-sourced links/titles) land straight in the page;
+// escape before insertion so a stray '<' or '"' can't break the layout.
+function escapeHtml(val) {
+  return String(val === null || val === undefined ? '' : val)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // Hard timeout wrapper — guarantees no single feed can hang the run
@@ -140,6 +163,92 @@ async function fetchCategory(categoryName, sources) {
   return allItems;
 }
 
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// The model returns its answer through a tool schema instead of raw JSON in
+// prose, so Anthropic validates the shape server-side — the "Expected ',' or
+// '}'" parse failures that used to silently degrade a category into a raw
+// link dump can no longer happen.
+const BRIEF_TOOL = {
+  name: 'emit_brief',
+  description: "Return the day's briefing for one category.",
+  input_schema: {
+    type: 'object',
+    properties: {
+      bullets: {
+        type: 'array',
+        description: '5 to 10 bullets, chosen by how much genuinely matters today.',
+        items: {
+          type: 'object',
+          properties: {
+            text: { type: 'string', description: 'Starts with a fitting emoji. 2-3 punchy sentences.' },
+            sourceIndex: { type: 'integer', description: '1-based index of the article this came from.' }
+          },
+          required: ['text', 'sourceIndex']
+        }
+      },
+      topStory: {
+        type: 'object',
+        properties: {
+          headline: { type: 'string', description: 'Punchy headline with a wink.' },
+          summary: { type: 'string', description: '3-4 candid witty sentences with the real stakes.' },
+          sourceIndex: { type: 'integer', description: '1-based index of the article this came from.' }
+        },
+        required: ['headline', 'summary', 'sourceIndex']
+      }
+    },
+    required: ['bullets', 'topStory']
+  }
+};
+
+// Retries transient faults (socket resets, 429s, 5xx, overloaded) with
+// exponential backoff; gives up immediately on auth/validation errors that
+// will never succeed no matter how many times you ask.
+async function callClaude(body, attempts) {
+  attempts = attempts || 4;
+  let lastErr;
+  for (let i = 1; i <= attempts; i++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 90000);
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      if (res.status === 429 || res.status >= 500) throw new Error('HTTP ' + res.status);
+
+      const data = await res.json();
+      if (data.error) {
+        const type = data.error.type || '';
+        const err = new Error(type + ': ' + data.error.message);
+        if (type === 'authentication_error' || type === 'permission_error' || type === 'invalid_request_error') {
+          err.fatal = true;
+        }
+        throw err;
+      }
+      return data;
+    } catch (err) {
+      clearTimeout(timer);
+      lastErr = err;
+      if (err.fatal) break;
+      if (i < attempts) {
+        const wait = Math.round(Math.pow(2, i) * 1000 + Math.random() * 500);
+        console.log('    retry ' + i + '/' + (attempts - 1) + ' in ' + wait + 'ms (' + err.message + ')');
+        await sleep(wait);
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function summarizeWithClaude(categoryName, items) {
   if (items.length === 0) return { bullets: [], topStory: null };
 
@@ -151,39 +260,35 @@ async function summarizeWithClaude(categoryName, items) {
     '\nPREVIEW: ' + safeString(item.summary).slice(0, 280)
   ).join('\n\n');
 
-  const prompt = 'You are the writer behind a wildly popular daily briefing - think Morning Brew wit crossed with a sharp friend who actually read every article and is not afraid to be honest about it. Your readers are smart, busy professionals who want the real takeaway AND a reason to smile.\n\nHere are today\'s articles from the "' + categoryName + '" category:\n\n' + headlineList + '\n\nPrioritize the freshest, most newsworthy items (see each item\'s DATE) - today\'s and this week\'s developments. Do not feature stale or dated stories just to hit a number; it is better to write fewer bullets than to pad with old news.\n\nWrite 5 to 10 bullet points (pick the number based on how much genuinely matters today - do not pad). Each bullet MUST:\n- Lead with the single most important fact, number, or development\n- Include the hard specifics: dollar amounts, percentages, names, dates. The numbers are the point.\n- Be written in a HUMOROUSLY CANDID voice - dry wit, the occasional knowing aside, calling things what they are. Smart and funny, never goofy or cringe. Think a witty columnist, not a stand-up comedian.\n- Be 2-3 punchy sentences. Tight. Every word earns its place.\n- Start with a fitting emoji\n- Reference the article index in "sourceIndex"\n\nTONE EXAMPLES (match this energy):\n"WeWork is trying the IPO thing again, because apparently nobody in that building learned anything the first time. The new pitch values them at 9B dollars - down a cool 91 percent from their 2019 peak of 47B. Bold strategy to ask public markets for money you set on fire once already."\n"OpenAI dropped GPT-5 and it can now book your flights, which is great until it books you a window seat in row 47. The model reportedly cost 2B dollars plus to train, so those reasoning skills better be worth it. Microsoft, who owns 49 percent, is presumably thrilled."\n\nAlso pick the SINGLE biggest story and write a 3-4 sentence Top Story in the same candid, witty voice.\n\nRespond ONLY in this exact JSON format, no markdown, no code blocks:\n{\n  "bullets": [\n    {"text": "emoji witty candid bullet...", "sourceIndex": 1}\n  ],\n  "topStory": {\n    "headline": "Punchy headline with a wink",\n    "summary": "3-4 candid witty sentences with the real stakes.",\n    "sourceIndex": 1\n  }\n}';
+  const prompt = 'You are the writer behind a wildly popular daily briefing - think Morning Brew wit crossed with a sharp friend who actually read every article and is not afraid to be honest about it. Your readers are smart, busy professionals who want the real takeaway AND a reason to smile.\n\nHere are today\'s articles from the "' + categoryName + '" category:\n\n' + headlineList + '\n\nPrioritize the freshest, most newsworthy items (see each item\'s DATE) - today\'s and this week\'s developments. Do not feature stale or dated stories just to hit a number; it is better to write fewer bullets than to pad with old news.\n\nWrite 5 to 10 bullet points (pick the number based on how much genuinely matters today - do not pad). Each bullet MUST:\n- Lead with the single most important fact, number, or development\n- Include the hard specifics: dollar amounts, percentages, names, dates. The numbers are the point.\n- Be written in a HUMOROUSLY CANDID voice - dry wit, the occasional knowing aside, calling things what they are. Smart and funny, never goofy or cringe. Think a witty columnist, not a stand-up comedian.\n- Be 2-3 punchy sentences. Tight. Every word earns its place.\n- Start with a fitting emoji\n- Reference the article index in "sourceIndex"\n\nTONE EXAMPLES (match this energy):\n"WeWork is trying the IPO thing again, because apparently nobody in that building learned anything the first time. The new pitch values them at 9B dollars - down a cool 91 percent from their 2019 peak of 47B. Bold strategy to ask public markets for money you set on fire once already."\n"OpenAI dropped GPT-5 and it can now book your flights, which is great until it books you a window seat in row 47. The model reportedly cost 2B dollars plus to train, so those reasoning skills better be worth it. Microsoft, who owns 49 percent, is presumably thrilled."\n\nAlso pick the SINGLE biggest story and write a 3-4 sentence Top Story in the same candid, witty voice.';
+
+  const pick = (idx) => items[(idx || 1) - 1] || items[0];
 
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 60000); // 60s max per Claude call
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+    const data = await callClaude({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 8000,
+      tools: [BRIEF_TOOL],
+      tool_choice: { type: 'tool', name: 'emit_brief' },
+      messages: [{ role: 'user', content: prompt }]
     });
-    clearTimeout(timer);
-    const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
-    const clean = data.content[0].text.trim().replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
+
+    if (data.stop_reason === 'max_tokens') {
+      console.log('    NOTE: hit max_tokens for ' + categoryName + ' - output may be clipped.');
+    }
+
+    const block = (data.content || []).find(c => c.type === 'tool_use');
+    if (!block || !block.input) throw new Error('no tool_use block in response');
+    const parsed = block.input;
 
     const bullets = (parsed.bullets || []).map(b => {
-      const item = items[(b.sourceIndex || 1) - 1] || items[0];
+      const item = pick(b.sourceIndex);
       return { text: safeString(b.text), link: item ? safeString(item.link) : '', source: item ? safeString(item.source) : '' };
     });
 
     let topStory = null;
     if (parsed.topStory) {
-      const item = items[(parsed.topStory.sourceIndex || 1) - 1] || items[0];
+      const item = pick(parsed.topStory.sourceIndex);
       topStory = {
         headline: safeString(parsed.topStory.headline),
         summary: safeString(parsed.topStory.summary),
@@ -193,7 +298,7 @@ async function summarizeWithClaude(categoryName, items) {
     }
     return { bullets, topStory };
   } catch (err) {
-    console.log('    Claude error for ' + categoryName + ': ' + err.message);
+    console.log('    Claude error for ' + categoryName + ' (all retries used): ' + err.message);
     return {
       bullets: items.slice(0, 5).map(i => ({ text: i.title, link: safeString(i.link), source: safeString(i.source) })),
       topStory: null,
@@ -224,9 +329,9 @@ function buildHTML(results, generatedAt) {
     const icon = icons[category] || '\uD83D\uDCF0';
     const slug = slugify(category);
     const count = (summary.bullets ? summary.bullets.length : 0) + (summary.topStory ? 1 : 0);
-    const topStoryHTML = summary.topStory ? '<div class="top-story"><div class="top-story-label">\u2605 TOP STORY</div><div class="top-story-headline">' + summary.topStory.headline + '</div><div class="top-story-text">' + summary.topStory.summary + '</div><div class="top-story-footer"><span class="top-story-source">\u2014 ' + summary.topStory.source + '</span>' + (summary.topStory.link ? '<a href="' + summary.topStory.link + '" target="_blank" class="read-more">Read full article \u2192</a>' : '') + '</div></div>' : '';
-    const bulletsHTML = (summary.bullets || []).map((b, i) => '<article class="bullet"><div class="bullet-marker">' + String(i + 1).padStart(2, '0') + '</div><div class="bullet-content"><div class="bullet-text">' + b.text + '</div><div class="bullet-footer"><span class="bullet-source">' + b.source + '</span>' + (b.link ? '<a href="' + b.link + '" target="_blank" class="read-more">Read more \u2192</a>' : '') + '</div></div></article>').join('');
-    return '<section class="category" id="' + slug + '" data-category="' + slug + '"><header class="category-header" onclick="toggleCategory(\'' + slug + '\')"><div class="category-icon">' + icon + '</div><div class="category-title-wrap"><div class="category-eyebrow">Section \u00B7 ' + count + ' stories</div><h2 class="category-title">' + category + '</h2></div><div class="category-toggle">\u25BC</div></header><div class="category-body">' + topStoryHTML + '<div class="bullets">' + bulletsHTML + '</div></div></section>';
+    const topStoryHTML = summary.topStory ? '<div class="top-story"><div class="top-story-label">\u2605 TOP STORY</div><div class="top-story-headline">' + escapeHtml(summary.topStory.headline) + '</div><div class="top-story-text">' + escapeHtml(summary.topStory.summary) + '</div><div class="top-story-footer"><span class="top-story-source">\u2014 ' + escapeHtml(summary.topStory.source) + '</span>' + (summary.topStory.link ? '<a href="' + escapeHtml(summary.topStory.link) + '" target="_blank" class="read-more">Read full article \u2192</a>' : '') + '</div></div>' : '';
+    const bulletsHTML = (summary.bullets || []).map((b, i) => '<article class="bullet"><div class="bullet-marker">' + String(i + 1).padStart(2, '0') + '</div><div class="bullet-content"><div class="bullet-text">' + escapeHtml(b.text) + '</div><div class="bullet-footer"><span class="bullet-source">' + escapeHtml(b.source) + '</span>' + (b.link ? '<a href="' + escapeHtml(b.link) + '" target="_blank" class="read-more">Read more \u2192</a>' : '') + '</div></div></article>').join('');
+    return '<section class="category" id="' + slug + '" data-category="' + slug + '"><header class="category-header" onclick="toggleCategory(\'' + slug + '\')"><div class="category-icon">' + icon + '</div><div class="category-title-wrap"><div class="category-eyebrow">Section \u00B7 ' + count + ' stories</div><h2 class="category-title">' + escapeHtml(category) + '</h2></div><div class="category-toggle">\u25BC</div></header><div class="category-body">' + topStoryHTML + '<div class="bullets">' + bulletsHTML + '</div></div></section>';
   }).join('');
 
   return '<!DOCTYPE html><html lang="en" data-built="' + generatedAt + '"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><title>Jake\'s Daily Brief</title><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;0,700;1,600&family=Spectral:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}:root{--paper:#F0F2F5;--ink:#142943;--ink-2:#455671;--ink-3:#455671;--muted:#7A8694;--rule:#1F3B5E;--rule-soft:#DDE2E8;--accent:#B07A1F;--cream:#FFFFFF;--navy:#1F3B5E;--navy-mid:#2C5380;--surface:#F6F8FB}html{scroll-behavior:smooth}body{background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif;font-size:17px;line-height:1.7}.container{max-width:980px;margin:0 auto;padding:0 32px}.masthead{padding:56px 0 32px;text-align:center;border-bottom:2px solid var(--navy);margin-bottom:32px}.masthead-ornament{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.4em;color:var(--muted);margin-bottom:18px;text-transform:uppercase}.masthead-title{font-family:"Spectral",serif;font-size:clamp(56px,10vw,96px);font-weight:700;line-height:.95;letter-spacing:-.01em;margin-bottom:20px;color:var(--navy)}.masthead-title .ital{font-style:italic;font-weight:700;color:var(--accent)}.masthead-meta{font-family:"DM Mono",monospace;font-size:12px;color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--rule-soft)}.masthead-meta strong{color:var(--navy)}.tabs-wrap{position:sticky;top:0;background:var(--paper);z-index:100;padding:16px 0;margin-bottom:32px;border-bottom:1px solid var(--rule-soft)}.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px}.tab{font-family:"DM Sans",sans-serif;font-size:14px;font-weight:500;padding:10px 18px;border:1px solid var(--rule-soft);background:var(--cream);color:var(--ink-3);border-radius:4px;cursor:pointer;white-space:nowrap;transition:all .15s}.tab:hover{border-color:var(--navy);color:var(--navy)}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}.toc{background:var(--cream);border:1px solid var(--rule-soft);border-radius:14px;padding:28px 32px;margin-bottom:40px}.toc-label{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft)}.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px}.toc-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--ink);transition:background .15s}.toc-item:hover{background:var(--surface)}.toc-icon{font-size:18px}.toc-name{flex:1;font-weight:600;font-size:15px}.toc-count{font-family:"DM Mono",monospace;font-size:11px;color:var(--muted);background:var(--surface);padding:2px 8px;border-radius:10px;border:1px solid var(--rule-soft)}.category{margin-bottom:24px;border:1px solid var(--rule-soft);border-radius:14px;overflow:hidden;background:var(--cream)}.category.hidden{display:none}.category-header{display:flex;align-items:center;gap:18px;padding:24px 32px;cursor:pointer;border-bottom:1px solid var(--rule-soft);background:var(--surface);user-select:none;transition:background .15s}.category-header:hover{background:var(--navy-light,#E8EEF5)}.category-icon{font-size:32px}.category-title-wrap{flex:1}.category-eyebrow{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}.category-title{font-family:"Fraunces",serif;font-size:32px;font-weight:600;line-height:1.15;color:var(--navy)}.category-toggle{font-family:"DM Mono",monospace;font-size:14px;color:var(--ink-3);transition:transform .25s}.category.collapsed .category-toggle{transform:rotate(-90deg)}.category-body{padding:32px;max-height:50000px;overflow:hidden;transition:max-height .4s,padding .3s}.category.collapsed .category-body{max-height:0;padding-top:0;padding-bottom:0}.top-story{background:var(--surface);border-left:4px solid var(--accent);padding:24px 28px;margin-bottom:32px;border-radius:0 8px 8px 0}.top-story-label{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.25em;color:var(--accent);margin-bottom:12px;font-weight:500}.top-story-headline{font-family:"Fraunces",serif;font-size:24px;font-weight:600;line-height:1.25;margin-bottom:14px;color:var(--navy)}.top-story-text{font-size:17px;line-height:1.75;color:var(--ink-2);margin-bottom:16px}.top-story-footer{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--rule-soft)}.top-story-source{font-family:"DM Mono",monospace;font-size:12px;color:var(--muted)}.bullets{display:flex;flex-direction:column}.bullet{display:flex;gap:24px;padding:24px 0;border-bottom:1px solid var(--rule-soft)}.bullet:last-child{border-bottom:none}.bullet-marker{font-family:"Fraunces",serif;font-size:28px;font-weight:600;color:var(--accent);line-height:1;min-width:48px;font-style:italic}.bullet-content{flex:1}.bullet-text{font-size:17px;line-height:1.75}.bullet-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.bullet-source{font-family:"DM Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}.read-more{font-family:"DM Mono",monospace;font-size:11px;color:var(--accent);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;font-weight:500;border-bottom:1px solid transparent;transition:border-color .15s}.read-more:hover{border-bottom-color:var(--accent)}.footer{margin-top:56px;padding:32px 0 40px;border-top:2px solid var(--navy);text-align:center;font-family:"DM Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;line-height:2}@media(max-width:600px){.container{padding:0 20px}.category-header{padding:18px 20px;gap:14px}.category-title{font-size:24px}.category-body{padding:20px}.bullet{gap:14px}.bullet-marker{font-size:22px;min-width:32px}.bullet-text{font-size:15px}}</style></head><body><div class="container"><header class="masthead"><div class="masthead-ornament">\u2014 Vol. 1 \u00B7 The Daily Briefing \u2014</div><h1 class="masthead-title">Jake\'s <span class="ital">Daily Brief</span></h1><div class="masthead-meta"><span><strong>' + date + '</strong></span><span>Edition \u00B7 ' + time + ' MT</span><span>' + totalSources + ' Sources</span><span>' + totalInsights + ' Stories</span></div></header><nav class="tabs-wrap"><div class="tabs">' + tabsHTML + '</div></nav><div class="toc"><div class="toc-label">\uD83D\uDCD1 In This Edition</div><div class="toc-grid">' + tocHTML + '</div></div><main>' + sections + '</main><footer class="footer">Jake\'s Daily Brief \u00B7 Powered by Claude \u00B7 ' + totalSources + ' sources \u00B7 ' + totalInsights + ' stories today</footer></div><script>document.querySelectorAll(".tab").forEach(function(tab){tab.addEventListener("click",function(){var target=tab.dataset.target;document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});tab.classList.add("active");document.querySelectorAll(".category").forEach(function(cat){if(target==="all"||cat.dataset.category===target){cat.classList.remove("hidden")}else{cat.classList.add("hidden")}});if(target!=="all"){document.getElementById(target).scrollIntoView({behavior:"smooth",block:"start"})}else{window.scrollTo({top:0,behavior:"smooth"})}})});function toggleCategory(slug){var cat=document.getElementById(slug);if(cat)cat.classList.toggle("collapsed")}</script><script>(function(){var BUILT=document.documentElement.getAttribute("data-built")||"";function check(){fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(html){var m=html.match(/data-built="([^"]+)"/);if(m&&m[1]&&m[1]!==BUILT){location.replace(location.pathname+"?v="+encodeURIComponent(m[1]))}}).catch(function(){})}window.addEventListener("pageshow",function(e){if(e.persisted)check()});document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});check()})();</script></body></html>';

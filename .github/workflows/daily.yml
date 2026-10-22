@@ -1,8 +1,17 @@
 name: Daily News Brief
 on:
   schedule:
-    - cron: '0 13 * * *'   # 7 AM Mountain — morning edition
-    - cron: '0 21 * * *'   # 3 PM Mountain — afternoon edition
+    # GitHub starts scheduled runs hours late (median ~3.6h, worst ~8h here),
+    # worst on the hour. Each edition gets three early, off-peak triggers; the
+    # guard step below skips the extras once a fresh edition is live.
+    # Morning edition (aim: ready by 7 AM Mountain = 13:00 UTC)
+    - cron: '17 7 * * *'
+    - cron: '41 8 * * *'
+    - cron: '7 10 * * *'
+    # Afternoon edition (aim: ready by 3 PM Mountain = 21:00 UTC)
+    - cron: '17 15 * * *'
+    - cron: '41 16 * * *'
+    - cron: '7 18 * * *'
   workflow_dispatch:
   push:
     branches: [ main ]
@@ -13,9 +22,10 @@ permissions:
   pages: write
   id-token: write
 
+# Don't let a redundant trigger cancel a build that's mid-flight.
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -25,32 +35,58 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Scheduled runs only: if the live edition is under 5 hours old, a
+      # sibling trigger already did the job. Manual and push runs always build.
+      - name: Skip if a fresh edition is already live
+        id: guard
+        if: github.event_name == 'schedule'
+        run: |
+          URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/?_=$(date +%s)"
+          BUILT=$(curl -fsS --max-time 20 "$URL" | grep -o 'data-built="[^"]*"' | head -1 | sed 's/data-built="//; s/"$//' || true)
+          if [ -n "$BUILT" ] && BUILT_TS=$(date -d "$BUILT" +%s 2>/dev/null); then
+            AGE=$(( $(date +%s) - BUILT_TS ))
+            echo "Live edition built $BUILT (${AGE}s ago)"
+            if [ "$AGE" -lt 18000 ]; then
+              echo "Fresh enough - skipping this run."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "Could not read live build time - building."
+          fi
+
       - name: Check out the repo
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/checkout@v4
 
       - name: Set up Node.js
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
         run: npm install
 
       - name: Run the news agent
+        if: steps.guard.outputs.skip != 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node agent.js
 
       - name: Prepare site folder
+        if: steps.guard.outputs.skip != 'true'
         run: |
           mkdir -p _site
           cp index.html _site/index.html
 
       - name: Upload Pages artifact
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
       - name: Deploy to GitHub Pages
+        if: steps.guard.outputs.skip != 'true'
         id: deployment
         uses: actions/deploy-pages@v4
